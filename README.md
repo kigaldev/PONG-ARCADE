@@ -1,57 +1,104 @@
 # 🎮 Pong Arcade Game
 
-> ¡Revive el clásico juego arcade **Pong** en Python!
+<div align="center">
+  <img src="/api/placeholder/800/400" alt="Pong Game Banner">
+  
+  [![Python Version](https://img.shields.io/badge/python-3.6%2B-blue.svg)](https://www.python.org/downloads/)
+  [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+  [![Status](https://img.shields.io/badge/status-active-success.svg)]()
+  
+  > Una recreación moderna del clásico juego arcade **Pong** en Python, ¡ahora con características mejoradas!
+</div>
 
-Este proyecto recrea el famoso juego Pong utilizando el módulo `turtle` de Python. Desafía a un amigo y compite para ver quién logra mantener la pelota en juego más tiempo. ¡Simple, divertido y retro!
+## 🌟 Características
+
+- ✨ **Interfaz Retro Mejorada**: Diseño clásico con toques modernos
+- 🎯 **Controles Suaves**: Respuesta precisa y fluida
+- ⚡ **Dificultad Progresiva**: La velocidad aumenta con cada rebote
+- ⏸️ **Sistema de Pausa**: Controla el ritmo del juego
+- 🔄 **Reinicio Rápido**: Vuelve a empezar cuando quieras
+- 🎨 **Gráficos Vectoriales**: Renderizado suave en cualquier resolución
+
+## 🎮 Controles
+
+| Jugador    | Acción        | Tecla          |
+|------------|---------------|----------------|
+| Izquierdo  | Mover arriba  | `W`           |
+| Izquierdo  | Mover abajo   | `S`           |
+| Derecho    | Mover arriba  | `↑` (flecha)  |
+| Derecho    | Mover abajo   | `↓` (flecha)  |
+| General    | Pausar juego  | `Espacio`     |
+| General    | Reiniciar     | `R`           |
+
+## 🚀 Instalación y Uso
+
+1. **Clona el repositorio**
+   ```bash
+   git clone https://github.com/kigaldev/PONG-ARCADE
+   cd pong-arcade
+   ```
+
+2. **Verifica los requisitos**
+   - Python 3.6 o superior
+   - Módulo `turtle` (incluido en Python estándar)
+
+3. **Ejecuta el juego**
+   ```bash
+   python pong.py
+   ```
+
+## 🛠️ Características Técnicas
+
+- **Resolución**: 800x600 píxeles
+- **FPS**: 120 cuadros por segundo
+- **Motor Gráfico**: Turtle Graphics
+- **Patrón de Diseño**: Orientado a Objetos
+
+## 🎯 Mecánicas del Juego
+
+### Sistema de Puntuación
+- 📈 Puntos al pasar la pelota por la zona del oponente
+- 🔄 Reinicio automático de la pelota tras cada punto
+- 📊 Marcador en tiempo real
+
+### Sistema de Dificultad
+- 🚀 Incremento gradual de velocidad
+- 🎯 Colisiones precisas
+- 🔄 Reset de velocidad al anotar puntos
+
+## 📁 Estructura del Proyecto
+
+```
+pong-arcade-game/
+│
+├── pong.py          # Código principal del juego
+├── README.md        # Documentación
+└── assets/          # Recursos (si se agregan en el futuro)
+```
+
+## 🤝 Contribuciones
+
+¡Las contribuciones son bienvenidas! Siente libre de:
+- 🐛 Reportar bugs
+- 💡 Sugerir nuevas características
+- 🔧 Enviar pull requests
+
+## 🤖 Asistencia en el Desarrollo
+
+Este proyecto ha sido desarrollado con la asistencia de:
+- ChatGPT 4.0 Omni
+- Claude 3.5 Sonnet
+
+## 📜 Licencia
+
+Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para más detalles.
 
 ---
 
-## 📂 Estructura del Proyecto
-
-- **`pong.py`**: Contiene el código principal del juego.
-- **`README.md`**: Documentación general del proyecto.
-- **`requirements.txt`**: Lista de dependencias necesarias (opcional).
-- **`assets/`**: Carpeta para incluir recursos adicionales como sonidos o gráficos (vacía por defecto).
-
----
-
-## 🚀 Instalación
-
-1. **Clona el repositorio**:
-
-   git clone https://github.com/tu-usuario/pong-arcade-game.git
-   cd pong-arcade-game
-Configura el entorno:
-
-Asegúrate de tener Python 3.6 o superior instalado en tu sistema.
-Instala las dependencias en requirements.txt (si existen).
-Ejecuta el juego:
-
-
-python pong.py
-🎮 Controles del Juego
-Jugador	Acción	Tecla
-Izquierdo	Mover arriba	W
-Izquierdo	Mover abajo	S
-Derecho	Mover arriba	↑ (flecha)
-Derecho	Mover abajo	↓ (flecha)
-🔍 Lógica de Programación
-El juego se basa en una lógica sencilla y clara, diseñada para una experiencia de juego fluida:
-
-Configuración del Entorno:
-
-Crea una pantalla de 600x400 píxeles.
-Configura las paletas para cada jugador y la pelota.
-Movimiento de la Pelota:
-
-La pelota se mueve en diagonal y rebota en los bordes superior e inferior de la pantalla.
-Colisiones:
-
-La pelota rebota al tocar las paletas o los bordes superior/inferior de la pantalla.
-Cuando un jugador no logra golpear la pelota, el jugador contrario suma un punto.
-Puntuación:
-
-Cada vez que la pelota sale por un extremo, el jugador opuesto gana un punto.
-La pelota se reinicia en el centro para continuar el juego.
-📜 Créditos
-Proyecto inspirado en el clásico juego Pong. Este código es una práctica en Python para reforzar conceptos de programación de videojuegos simples.
+<div align="center">
+  <p>
+    ¿Disfrutaste del juego? ¡Dale ⭐️ al repositorio!
+  </p>
+  
+  Hecho con ❤️ por [KIGALDEV]
+</div>

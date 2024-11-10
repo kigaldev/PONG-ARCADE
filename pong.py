@@ -1,121 +1,142 @@
 import turtle
+import time
 
-# Configuración de la pantalla
-screen = turtle.Screen()
-screen.title("Pong - Arcade Game")
-screen.bgcolor("black")
-screen.setup(width=600, height=400)
-screen.tracer(0)  # Desactiva la actualización automática para control manual
-
-# Paleta del Jugador Izquierdo
-left_paddle = turtle.Turtle()
-left_paddle.shape("square")
-left_paddle.color("white")
-left_paddle.shapesize(stretch_wid=6, stretch_len=1)
-left_paddle.penup()
-left_paddle.goto(-250, 0)
-
-# Paleta del Jugador Derecho
-right_paddle = turtle.Turtle()
-right_paddle.shape("square")
-right_paddle.color("white")
-right_paddle.shapesize(stretch_wid=6, stretch_len=1)
-right_paddle.penup()
-right_paddle.goto(250, 0)
-
-# Pelota
-ball = turtle.Turtle()
-ball.shape("circle")
-ball.color("white")
-ball.penup()
-ball.goto(0, 0)
-ball.dx = 0.1  # Velocidad en el eje x
-ball.dy = 0.1  # Velocidad en el eje y
-
-# Puntuación
-score_left = 0
-score_right = 0
-
-# Contador de colisiones con las paletas
-collision_count = 0
-collision_threshold = 5  # Incrementar velocidad cada 5 colisiones
-
-# Mostrar puntuación
-score_display = turtle.Turtle()
-score_display.color("white")
-score_display.penup()
-score_display.hideturtle()
-score_display.goto(0, 160)
-score_display.write("Jugador Izquierdo: 0  Jugador Derecho: 0", align="center", font=("Courier", 14, "normal"))
-
-def update_score():
-    score_display.clear()
-    score_display.write(f"Jugador Izquierdo: {score_left}  Jugador Derecho: {score_right}", align="center", font=("Courier", 14, "normal"))
-
-# Funciones de movimiento de paletas
-def move_left_paddle_up():
-    y = left_paddle.ycor()
-    if y < 150:  # Limita el movimiento
-        left_paddle.sety(y + 20)
-
-def move_left_paddle_down():
-    y = left_paddle.ycor()
-    if y > -150:
-        left_paddle.sety(y - 20)
-
-def move_right_paddle_up():
-    y = right_paddle.ycor()
-    if y < 150:
-        right_paddle.sety(y + 20)
-
-def move_right_paddle_down():
-    y = right_paddle.ycor()
-    if y > -150:
-        right_paddle.sety(y - 20)
-
-# Asignación de teclas
-screen.listen()
-screen.onkeypress(move_left_paddle_up, "w")
-screen.onkeypress(move_left_paddle_down, "s")
-screen.onkeypress(move_right_paddle_up, "Up")
-screen.onkeypress(move_right_paddle_down, "Down")
-
-# Bucle principal del juego
-while True:
-    screen.update()
-    
-    # Mover la pelota
-    ball.setx(ball.xcor() + ball.dx)
-    ball.sety(ball.ycor() + ball.dy)
-    
-    # Colisiones con los bordes superior e inferior
-    if ball.ycor() > 190 or ball.ycor() < -190:
-        ball.dy *= -1
-    
-    # Colisión con la paleta derecha
-    if (ball.xcor() > 240 and ball.xcor() < 250) and (ball.ycor() < right_paddle.ycor() + 50 and ball.ycor() > right_paddle.ycor() - 50):
-        ball.dx *= -1
-    
-    # Colisión con la paleta izquierda
-    if (ball.xcor() < -240 and ball.xcor() > -250) and (ball.ycor() < left_paddle.ycor() + 50 and ball.ycor() > left_paddle.ycor() - 50):
-        ball.dx *= -1
-    
-    # Incrementa la velocidad de la pelota cada 10 colisiones
-    if collision_count >= collision_threshold:
-        ball.dx *= 1.1
-        ball.dy *= 1.1
-        collision_count = 0  # Reinicia el contador
+class PongGame:
+    def __init__(self):
+        # Configuración de la pantalla
+        self.screen = turtle.Screen()
+        self.screen.title("Pong - Arcade Game")
+        self.screen.bgcolor("black")
+        self.screen.setup(width=800, height=600)  # Pantalla más grande para mejor jugabilidad
+        self.screen.tracer(0)
         
-    # Revisión de puntos para el Jugador Derecho
-    if ball.xcor() > 290:
-        ball.goto(0, 0)
-        ball.dx *= -1
-        score_left += 1
-        update_score()
+        # Configuración inicial
+        self.PADDLE_SPEED = 20
+        self.BALL_SPEED = 1.5
+        self.SPEED_INCREMENT = 2
+        self.COLLISION_THRESHOLD = 5
+        
+        self.init_game_objects()
+        self.init_score()
+        self.bind_keys()
+        
+        # Variables de estado
+        self.game_paused = False
+        self.collision_count = 0
+        
+    def init_game_objects(self):
+        # Inicializar paletas
+        self.paddles = {}
+        for side, x_pos in [("left", -350), ("right", 350)]:
+            paddle = turtle.Turtle()
+            paddle.speed(0)
+            paddle.shape("square")
+            paddle.color("white")
+            paddle.shapesize(stretch_wid=6, stretch_len=1)
+            paddle.penup()
+            paddle.goto(x_pos, 0)
+            self.paddles[side] = paddle
+            
+        # Inicializar pelota
+        self.ball = turtle.Turtle()
+        self.ball.speed(0)
+        self.ball.shape("circle")
+        self.ball.color("white")
+        self.ball.penup()
+        self.reset_ball()
+        
+    def init_score(self):
+        self.score = {"left": 0, "right": 0}
+        self.score_display = turtle.Turtle()
+        self.score_display.color("white")
+        self.score_display.penup()
+        self.score_display.hideturtle()
+        self.score_display.goto(0, 260)
+        self.update_score()
+        
+    def bind_keys(self):
+        self.screen.listen()
+        # Controles de las paletas
+        self.screen.onkeypress(lambda: self.move_paddle("left", "up"), "w")
+        self.screen.onkeypress(lambda: self.move_paddle("left", "down"), "s")
+        self.screen.onkeypress(lambda: self.move_paddle("right", "up"), "Up")
+        self.screen.onkeypress(lambda: self.move_paddle("right", "down"), "Down")
+        # Controles adicionales
+        self.screen.onkey(self.toggle_pause, "space")
+        self.screen.onkey(self.reset_game, "r")
+        
+    def move_paddle(self, side, direction):
+        paddle = self.paddles[side]
+        current_y = paddle.ycor()
+        new_y = current_y + (self.PADDLE_SPEED if direction == "up" else -self.PADDLE_SPEED)
+        
+        # Limitar movimiento dentro de la pantalla
+        if -250 < new_y < 250:
+            paddle.sety(new_y)
+            
+    def reset_ball(self):
+        self.ball.goto(0, 0)
+        self.ball.dx = self.BALL_SPEED
+        self.ball.dy = self.BALL_SPEED
+        self.collision_count = 0
+        
+    def update_score(self):
+        self.score_display.clear()
+        score_text = f"Jugador Izquierdo: {self.score['left']}  Jugador Derecho: {self.score['right']}"
+        self.score_display.write(score_text, align="center", font=("Courier", 16, "normal"))
+        
+    def check_collisions(self):
+        # Colisiones con bordes superior e inferior
+        if abs(self.ball.ycor()) > 290:
+            self.ball.dy *= -1
+            
+        # Colisiones con paletas
+        for side, paddle in self.paddles.items():
+            if (abs(self.ball.xcor() - paddle.xcor()) < 20 and 
+                abs(self.ball.ycor() - paddle.ycor()) < 50):
+                self.ball.dx *= -1
+                self.collision_count += 1
+                
+                # Incrementar velocidad después de cierto número de colisiones
+                if self.collision_count >= self.COLLISION_THRESHOLD:
+                    self.ball.dx *= self.SPEED_INCREMENT
+                    self.ball.dy *= self.SPEED_INCREMENT
+                    self.collision_count = 0
+                    
+    def check_scoring(self):
+        # Puntuación
+        if self.ball.xcor() > 390:
+            self.score["left"] += 1
+            self.update_score()
+            self.reset_ball()
+        elif self.ball.xcor() < -390:
+            self.score["right"] += 1
+            self.update_score()
+            self.reset_ball()
+            
+    def toggle_pause(self):
+        self.game_paused = not self.game_paused
+        
+    def reset_game(self):
+        self.score = {"left": 0, "right": 0}
+        self.update_score()
+        self.reset_ball()
+        
+    def run(self):
+        while True:
+            self.screen.update()
+            
+            if not self.game_paused:
+                # Mover la pelota
+                self.ball.setx(self.ball.xcor() + self.ball.dx)
+                self.ball.sety(self.ball.ycor() + self.ball.dy)
+                
+                self.check_collisions()
+                self.check_scoring()
+                
+            time.sleep(1/120)  # Limitar FPS para consistencia
+
+if __name__ == "__main__":
+    game = PongGame()
+    game.run()
     
-    # Revisión de puntos para el Jugador Izquierdo
-    elif ball.xcor() < -290:
-        ball.goto(0, 0)
-        ball.dx *= -1
-        score_right += 1
-        update_score()
